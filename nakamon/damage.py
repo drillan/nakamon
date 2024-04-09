@@ -14,6 +14,8 @@ def get_parameters(skill_name: str, player: Nakamon, enemy: Nakamon) -> dict:
     parameters["他_系統"] = enemy_.loc["系統"]
 
     parameters["スキル_属性"] = orange_skill.loc[skill_name, "属性"]
+    if pd.isna(parameters["スキル_属性"]):
+        parameters["スキル_属性"] = ""
     parameters["スキル_種別"] = orange_skill.loc[skill_name, "種別"]
     parameters["スキル_系統"] = orange_skill.loc[skill_name, "系統"]
     if parameters["スキル_系統"] and parameters["他_系統"] == parameters["スキル_系統"]:
@@ -25,16 +27,22 @@ def get_parameters(skill_name: str, player: Nakamon, enemy: Nakamon) -> dict:
     parameters["自_攻"] = player_.loc["攻"]
     parameters["自_器用"] = player_.loc["器用"]
     parameters["自_攻魔"] = player_.loc["攻魔"]
-    parameters["自_属性"] = player_.loc[f'{parameters["スキル_属性"]}・全']
-    if parameters["スキル_種別"] in ("斬撃", "体技"):
-        attribute = player_.loc[f'{parameters["スキル_属性"]}・斬体']
-    elif parameters["スキル_種別"] == "呪文":
-        attribute = player_.loc[f'{parameters["スキル_属性"]}・呪文']
-    elif parameters["スキル_種別"] == "ブレス":
-        attribute = player_.loc[f'{parameters["スキル_属性"]}・ブレス']
-    parameters["自_撃_属性"] = (
-        attribute + player_.loc[f'{parameters["スキル_属性"]}・全']
-    )
+    if parameters["スキル_属性"]:
+        parameters["自_属性"] = player_.loc[f'{parameters["スキル_属性"]}・全']
+    else:
+        parameters["自_属性"] = 0
+    if parameters["スキル_属性"]:
+        if parameters["スキル_種別"] in ("斬撃", "体技"):
+            attribute = player_.loc[f'{parameters["スキル_属性"]}・斬体']
+        elif parameters["スキル_種別"] == "呪文":
+            attribute = player_.loc[f'{parameters["スキル_属性"]}・呪文']
+        elif parameters["スキル_種別"] == "ブレス":
+            attribute = player_.loc[f'{parameters["スキル_属性"]}・ブレス']
+        parameters["自_撃_属性"] = (
+            attribute + player_.loc[f'{parameters["スキル_属性"]}・全']
+        )
+    else:
+        parameters["自_撃_属性"] = 0
     parameters["自_撃_系統"] = player_.loc[f'撃・{parameters["他_系統"]}']
 
     parameters["他_守"] = enemy_.loc["守"]
@@ -47,7 +55,10 @@ def get_parameters(skill_name: str, player: Nakamon, enemy: Nakamon) -> dict:
     elif parameters["スキル_種別"] == "ブレス":
         parameters["他_耐_スキル"] = enemy_.loc["耐・ブレス"]
     parameters["他_耐_系統"] = enemy_.loc[f'耐・{parameters["自_系統"]}']
-    parameters["他_耐_属性"] = enemy_.loc[f'耐・{parameters["スキル_属性"]}']
+    if parameters["スキル_属性"]:
+        parameters["他_耐_属性"] = enemy_.loc[f'耐・{parameters["スキル_属性"]}']
+    else:
+        parameters["他_耐_属性"] = 0
     return parameters
 
 
