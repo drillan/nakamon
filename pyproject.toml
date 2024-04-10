@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "nakamon"
-version = "0.1.0a"
+version = "0.1.0a2"
 description = ""
 authors = ["driller"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-pandas = "^2.2.1"
+python = "^3.10"
+pandas = "^2.0.3"
 
 
 [tool.poetry.group.dev.dependencies]
