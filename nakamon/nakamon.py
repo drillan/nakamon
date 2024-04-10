@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 import pandas as pd
 
@@ -80,6 +81,7 @@ class Nakamon:
     name: str
     seikaku: str
     soshitsu: str
+    skill: Optional[str|list] = None
 
     def __post_init__(self):
         self.status = (
@@ -91,10 +93,14 @@ class Nakamon:
         self.damage = pd.Series(index=damage).fillna(0)
         self.resistance = pd.Series(index=resistance).fillna(0)
         attribute_resistance = nakamon_resistance.loc[self.name]
-        attribute_resistance.index = attribute_resistance.index.map(lambda x: f"耐・{x}")
+        attribute_resistance.index = attribute_resistance.index.map(
+            lambda x: f"耐・{x}"
+        )
         self.resistance.loc[attribute_resistance.index] = attribute_resistance
         self.probability_rates = pd.Series(index=probability_rates).fillna(0)
         self.probability_rates["会心率"] = 0.01
+        if self.skill:
+            self.add_skill(self.skill)
         self.data = self.make_all_data()
 
     def add_red_skill(self, skill_name: str):
@@ -129,7 +135,7 @@ class Nakamon:
             self.resistance[skill_category] = self.resistance[skill_category] + diff
         self.data = self.make_all_data()
 
-    def add_skill(self, skill_name: str):
+    def _add_skill(self, skill_name: str):
         self.skills.append(skill_name)
         if skill_name in red_skill.loc[:, "スキル"].unique():
             self.add_red_skill(skill_name)
@@ -137,6 +143,14 @@ class Nakamon:
             self.add_resistance_skill(skill_name)
         self.data = self.make_all_data()
 
+    def add_skill(self, skill: str | list):
+        if isinstance(skill, str):
+            self._add_skill(skill)
+        elif hasattr(skill, "__iter__"):
+            for skill_ in skill:
+                self._add_skill(skill_)
+        else:
+            self._add_skill(skill)
 
     def make_all_data(self) -> pd.DataFrame:
         df = pd.DataFrame(pd.concat([self.status, self.damage, self.resistance])).T
