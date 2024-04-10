@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "nakamon"
-version = "0.1.0a2"
+version = "0.1.0a3"
 description = ""
 authors = ["driller"]
 readme = "README.md"
+include = ["data/*.csv"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
