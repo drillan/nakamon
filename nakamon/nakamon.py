@@ -4,7 +4,7 @@ from typing import Optional
 
 import pandas as pd
 
-data_dir = Path().resolve().parent / "data"
+data_dir = Path(__file__).resolve().parent.parent / "data"
 nakamon_status = pd.read_csv(data_dir / "nakamon_status.csv")
 nakamon_resistance = pd.read_csv(data_dir / "resistance_status.csv", index_col="名前")
 red_skill = pd.read_csv(data_dir / "red_skill.csv")

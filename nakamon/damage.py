@@ -1,8 +1,11 @@
+from pathlib import Path
+
 import pandas as pd
 
 from nakamon import Nakamon
 
-orange_skill = pd.read_csv("../data/orange_skill.csv").set_index("スキル")
+data_dir = Path(__file__).resolve().parent.parent / "data"
+orange_skill = pd.read_csv(data_dir / "orange_skill.csv").set_index("スキル")
 
 
 def get_parameters(skill_name: str, player: Nakamon, enemy: Nakamon) -> dict:
